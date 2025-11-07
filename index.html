@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión Integral</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <style>
+        /* ===== VARIABLES CSS - Paleta Girly ===== */
+        :root {
+            --primary-color: #d63384;
+            --secondary-color: #ff6b9d;
+            --success-color: #c77dff;
+            --danger-color: #ff9a9e;
+            --warning-color: #fec8d8;
+            --info-color: #b19cd9;
+            --light-bg: #fff0f5;
+            --dark-text: #8b4a6b;
+            --light-text: #b8869b;
+            --border-color: #f8d7da;
+            --pink-light: #ffeef2;
+            --pink-medium: #ffc0cb;
+            --purple-light: #e6d9f2;
+            --lavender: #d8bfd8;
+        }
+        
+        /* ===== ESTILOS GENERALES ===== */
+        body {
+            font-family: 'Segoe UI', 'Comic Sans MS', 'Trebuchet MS', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding-top: 56px;
+        }
+        
+        /* ===== NAVEGACIÓN ===== */
+        .navbar {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c77dff 100%) !important;
+            box-shadow: 0 4px 20px rgba(214, 51, 132, 0.3);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.3);
+            font-style: italic;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .nav-link {
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            margin: 0 5px;
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            transform: scale(1.05);
+        }
+        
+        /* ===== CONTENEDOR PRINCIPAL ===== */
+        .main-container {
+            background: linear-gradient(to bottom, #ffffff 0%, #fff0f5 100%);
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(255, 107, 157, 0.25);
+            margin: 2rem auto;
+            padding: 2rem;
+            min-height: calc(100vh - 120px);
+            border: 2px solid rgba(255, 182, 193, 0.3);
+        }
+        
+        /* ===== MÓDULOS (Ocultos por defecto) ===== */
+        .module-section {
+            display: none;
+        }
+        
+        .module-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ===== HEADER DE MÓDULO ===== */
+        .module-header {
+            border-bottom: 4px solid;
+            border-image: linear-gradient(90deg, #ff6b9d, #c77dff, #ff9a9e) 1;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .module-header::after {
+            content: '✨';
+            position: absolute;
+            right: 0;
+            top: 0;
+            font-size: 1.5rem;
+        }
+        
+        .module-header h2 {
+            background: linear-gradient(135deg, #ff6b9d, #c77dff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(255, 107, 157, 0.2);
+        }
+        
+        /* ===== DASHBOARD CARDS ===== */
+        .dashboard-card {
+            border: 2px solid rgba(255, 182, 193, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.15);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #fff0f5 100%);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b9d, #c77dff, #ff9a9e);
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(255, 107, 157, 0.25);
+            border-color: rgba(255, 107, 157, 0.5);
+        }
+        
+        .dashboard-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #ff6b9d, #c77dff);
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #d63384, #c77dff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            color: var(--light-text);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+        
+        /* ===== TABLAS ===== */
+        .table-container {
+            background: linear-gradient(135deg, #ffffff 0%, #fff0f5 100%);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.15);
+            margin-top: 2rem;
+            border: 2px solid rgba(255, 182, 193, 0.3);
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table thead {
+            background: linear-gradient(135deg, #ff6b9d, #c77dff);
+            color: white;
+        }
+        
+        .table thead th {
+            border: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            color: white;
+            padding: 1rem;
+        }
+        
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr:hover {
+            background: rgba(255, 182, 193, 0.1);
+            transform: scale(1.01);
+        }
+        
+        /* ===== BOTONES ===== */
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b9d, #c77dff);
+            border: none;
+            border-radius: 25px;
+            padding: 0.6rem 1.5rem;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ff5a8a, #b86de8);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #fec8d8, #ff9a9e);
+            border: none;
+            border-radius: 25px;
+            color: #8b4a6b;
+        }
+        
+        .btn-action {
+            padding: 0.5rem 1rem;
+            margin: 0 0.2rem;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        
+        .btn-edit {
+            background: linear-gradient(135deg, #fec8d8, #ffb3d9);
+            color: #8b4a6b;
+        }
+        
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #ffb3d9, #ff9ac2);
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
+        }
+        
+        .btn-delete {
+            background: linear-gradient(135deg, #ff9a9e, #ffb3ba);
+            color: #8b4a6b;
+        }
+        
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #ff8a8e, #ffa3aa);
+            transform: scale(1.1) rotate(-5deg);
+            box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
+        }
+        
+        /* ===== MODALES ===== */
+        .modal-header {
+            background: linear-gradient(135deg, #ff6b9d, #c77dff);
+            color: white;
+            border-bottom: none;
+            border-radius: 0;
+        }
+        
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+        
+        .modal-content {
+            border-radius: 20px;
+            border: 2px solid rgba(255, 182, 193, 0.3);
+            overflow: hidden;
+        }
+        
+        /* ===== FORMULARIOS ===== */
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid rgba(255, 182, 193, 0.5);
+            border-radius: 15px;
+            padding: 0.7rem;
+            transition: all 0.3s ease;
+            background: #fff0f5;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #ff6b9d;
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 157, 0.25);
+            background: white;
+        }
+        
+        /* ===== BADGES ===== */
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        
+        .bg-success {
+            background: linear-gradient(135deg, #c77dff, #b19cd9) !important;
+        }
+        
+        .bg-danger {
+            background: linear-gradient(135deg, #ff9a9e, #ffb3ba) !important;
+        }
+        
+        .bg-warning {
+            background: linear-gradient(135deg, #fec8d8, #ffb3d9) !important;
+            color: #8b4a6b !important;
+        }
+        
+        .bg-info {
+            background: linear-gradient(135deg, #b19cd9, #d8bfd8) !important;
+        }
+        
+        .bg-secondary {
+            background: linear-gradient(135deg, #fec8d8, #ff9a9e) !important;
+            color: #8b4a6b !important;
+        }
+        
+        /* ===== GRÁFICOS ===== */
+        .chart-container {
+            background: linear-gradient(135deg, #ffffff 0%, #fff0f5 100%);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.15);
+            margin-top: 2rem;
+            height: 400px;
+            border: 2px solid rgba(255, 182, 193, 0.3);
+        }
+        
+        /* ===== NOTIFICACIONES ===== */
+        .notification {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            animation: slideIn 0.3s ease;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 182, 193, 0.3);
+            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.3);
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #c77dff, #b19cd9);
+            color: white;
+            border-color: rgba(199, 125, 255, 0.5);
+        }
+        
+        .alert-info {
+            background: linear-gradient(135deg, #b19cd9, #d8bfd8);
+            color: white;
+            border-color: rgba(177, 156, 217, 0.5);
+        }
+        
+        .alert-warning {
+            background: linear-gradient(135deg, #fec8d8, #ffb3d9);
+            color: #8b4a6b;
+            border-color: rgba(254, 200, 216, 0.5);
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, #ff9a9e, #ffb3ba);
+            color: white;
+            border-color: rgba(255, 154, 158, 0.5);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px) rotate(5deg);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0) rotate(0deg);
+                opacity: 1;
+            }
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
+        }
+        
+        /* ===== LOADING SPINNER ===== */
+        .spinner-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 107, 157, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .spinner-overlay.active {
+            display: flex;
+        }
+        
+        .spinner-border {
+            border-color: #ff6b9d;
+            border-right-color: transparent;
+        }
+        
+        /* ===== DECORACIONES ADICIONALES ===== */
+        h4 {
+            color: var(--dark-text);
+            font-weight: 600;
+        }
+        
+        /* Efectos de brillo en elementos interactivos */
+        .btn-primary i {
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Animación de corazones flotantes (opcional) */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        .module-header h2 i {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== NAVEGACIÓN ===== -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-cogs me-2"></i>
+                Sistema de Gestión
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showModule('inventario')">
+                            <i class="fas fa-boxes me-1"></i> Inventario
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showModule('maquinaria')">
+                            <i class="fas fa-tools me-1"></i> Maquinaria
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showModule('personal')">
+                            <i class="fas fa-users me-1"></i> Personal
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showModule('actividades')">
+                            <i class="fas fa-calendar-alt me-1"></i> Actividades
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== CONTENEDOR PRINCIPAL ===== -->
+    <div class="container-fluid">
+        <div class="main-container">
+            
+            <!-- ===== MÓDULO: INVENTARIO DE MATERIALES ===== -->
+            <div id="module-inventario" class="module-section active">
+                <div class="module-header">
+                    <h2><i class="fas fa-boxes me-2"></i>Inventario de Materiales</h2>
+                </div>
+                
+                <!-- Dashboard -->
+                <div class="row" id="inventario-dashboard">
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #c77dff, #b19cd9);">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <div class="stat-value" id="inventario-total">0</div>
+                                <div class="stat-label">Total Materiales</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #fec8d8, #ffb3d9);">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="stat-value" id="inventario-bajo">0</div>
+                                <div class="stat-label">Stock Bajo</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #b19cd9, #d8bfd8);">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div class="stat-value" id="inventario-valor">Q0</div>
+                                <div class="stat-label">Valor Total</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #ff6b9d, #c77dff);">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="stat-value" id="inventario-categorias">0</div>
+                                <div class="stat-label">Categorías</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gráfico -->
+                <div class="chart-container">
+                    <canvas id="inventario-chart"></canvas>
+                </div>
+                
+                <!-- Botón Agregar -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <h4>Lista de Materiales</h4>
+                    <button class="btn btn-primary" onclick="openInventarioModal()">
+                        <i class="fas fa-plus me-2"></i>Agregar Material
+                    </button>
+                </div>
+                
+                <!-- Tabla -->
+                <div class="table-container">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Categoría</th>
+                                <th>Cantidad</th>
+                                <th>Unidad</th>
+                                <th>Precio Unitario</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventario-table-body">
+                            <!-- Se llena dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ===== MÓDULO: CONTROL DE MAQUINARIA ===== -->
+            <div id="module-maquinaria" class="module-section">
+                <div class="module-header">
+                    <h2><i class="fas fa-tools me-2"></i>Control de Maquinaria</h2>
+                </div>
+                
+                <!-- Dashboard -->
+                <div class="row" id="maquinaria-dashboard">
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #ff6b9d, #c77dff);">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                                <div class="stat-value" id="maquinaria-total">0</div>
+                                <div class="stat-label">Total Máquinas</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #c77dff, #b19cd9);">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="stat-value" id="maquinaria-operativa">0</div>
+                                <div class="stat-label">Operativas</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #ff9a9e, #ffb3ba);">
+                                    <i class="fas fa-times-circle"></i>
+                                </div>
+                                <div class="stat-value" id="maquinaria-mantenimiento">0</div>
+                                <div class="stat-label">En Mantenimiento</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #fec8d8, #ffb3d9);">
+                                    <i class="fas fa-wrench"></i>
+                                </div>
+                                <div class="stat-value" id="maquinaria-uso">0%</div>
+                                <div class="stat-label">Tasa de Uso</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gráfico -->
+                <div class="chart-container">
+                    <canvas id="maquinaria-chart"></canvas>
+                </div>
+                
+                <!-- Botón Agregar -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <h4>Lista de Maquinaria</h4>
+                    <button class="btn btn-primary" onclick="openMaquinariaModal()">
+                        <i class="fas fa-plus me-2"></i>Agregar Maquinaria
+                    </button>
+                </div>
+                
+                <!-- Tabla -->
+                <div class="table-container">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Marca</th>
+                                <th>Modelo</th>
+                                <th>Estado</th>
+                                <th>Último Mantenimiento</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="maquinaria-table-body">
+                            <!-- Se llena dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ===== MÓDULO: REGISTRO DE PERSONAL ===== -->
+            <div id="module-personal" class="module-section">
+                <div class="module-header">
+                    <h2><i class="fas fa-users me-2"></i>Registro de Ingresos/Salidas de Personal</h2>
+                </div>
+                
+                <!-- Dashboard -->
+                <div class="row" id="personal-dashboard">
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #b19cd9, #d8bfd8);">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div class="stat-value" id="personal-presente">0</div>
+                                <div class="stat-label">Presentes Hoy</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #c77dff, #b19cd9);">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </div>
+                                <div class="stat-value" id="personal-ingresos">0</div>
+                                <div class="stat-label">Ingresos Hoy</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #fec8d8, #ffb3d9);">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </div>
+                                <div class="stat-value" id="personal-salidas">0</div>
+                                <div class="stat-label">Salidas Hoy</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #ff6b9d, #c77dff);">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-value" id="personal-total">0</div>
+                                <div class="stat-label">Total Empleados</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gráfico -->
+                <div class="chart-container">
+                    <canvas id="personal-chart"></canvas>
+                </div>
+                
+                <!-- Botón Registrar -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <h4>Registro de Movimientos</h4>
+                    <button class="btn btn-primary" onclick="openPersonalModal()">
+                        <i class="fas fa-plus me-2"></i>Registrar Movimiento
+                    </button>
+                </div>
+                
+                <!-- Tabla -->
+                <div class="table-container">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Empleado</th>
+                                <th>Cédula</th>
+                                <th>Tipo</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Observaciones</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="personal-table-body">
+                            <!-- Se llena dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ===== MÓDULO: PLANIFICACIÓN DE ACTIVIDADES ===== -->
+            <div id="module-actividades" class="module-section">
+                <div class="module-header">
+                    <h2><i class="fas fa-calendar-alt me-2"></i>Planificación de Actividades</h2>
+                </div>
+                
+                <!-- Dashboard -->
+                <div class="row" id="actividades-dashboard">
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #d63384, #ff6b9d);">
+                                    <i class="fas fa-tasks"></i>
+                                </div>
+                                <div class="stat-value" id="actividades-total">0</div>
+                                <div class="stat-label">Total Actividades</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #c77dff, #b19cd9);">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="stat-value" id="actividades-completadas">0</div>
+                                <div class="stat-label">Completadas</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #fec8d8, #ffb3d9);">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="stat-value" id="actividades-pendientes">0</div>
+                                <div class="stat-label">Pendientes</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #ff9a9e, #ffb3ba);">
+                                    <i class="fas fa-exclamation"></i>
+                                </div>
+                                <div class="stat-value" id="actividades-vencidas">0</div>
+                                <div class="stat-label">Vencidas</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gráfico -->
+                <div class="chart-container">
+                    <canvas id="actividades-chart"></canvas>
+                </div>
+                
+                <!-- Botón Agregar -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <h4>Lista de Actividades</h4>
+                    <button class="btn btn-primary" onclick="openActividadesModal()">
+                        <i class="fas fa-plus me-2"></i>Agregar Actividad
+                    </button>
+                </div>
+                
+                <!-- Tabla -->
+                <div class="table-container">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Actividad</th>
+                                <th>Responsable</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Fin</th>
+                                <th>Prioridad</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="actividades-table-body">
+                            <!-- Se llena dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===== MODALES ===== -->
+    
+    <!-- Modal Inventario -->
+    <div class="modal fade" id="modalInventario" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalInventarioTitle">Agregar Material</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formInventario">
+                        <input type="hidden" id="inventario-id">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del Material</label>
+                            <input type="text" class="form-control" id="inventario-nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Categoría</label>
+                            <select class="form-select" id="inventario-categoria" required>
+                                <option value="">Seleccione...</option>
+                                <option value="Construcción">Construcción</option>
+                                <option value="Herramientas">Herramientas</option>
+                                <option value="Electricidad">Electricidad</option>
+                                <option value="Plomería">Plomería</option>
+                                <option value="Otros">Otros</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Cantidad</label>
+                                <input type="number" class="form-control" id="inventario-cantidad" min="0" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Unidad</label>
+                                <select class="form-select" id="inventario-unidad" required>
+                                    <option value="Unidad">Unidad</option>
+                                    <option value="Kg">Kg</option>
+                                    <option value="Litro">Litro</option>
+                                    <option value="Metro">Metro</option>
+                                    <option value="Caja">Caja</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Precio Unitario</label>
+                            <input type="number" class="form-control" id="inventario-precio" min="0" step="0.01" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveInventario()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Maquinaria -->
+    <div class="modal fade" id="modalMaquinaria" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalMaquinariaTitle">Agregar Maquinaria</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formMaquinaria">
+                        <input type="hidden" id="maquinaria-id">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="maquinaria-nombre" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tipo</label>
+                                <select class="form-select" id="maquinaria-tipo" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="Excavadora">Excavadora</option>
+                                    <option value="Grúa">Grúa</option>
+                                    <option value="Compactadora">Compactadora</option>
+                                    <option value="Generador">Generador</option>
+                                    <option value="Otros">Otros</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Estado</label>
+                                <select class="form-select" id="maquinaria-estado" required>
+                                    <option value="Operativa">Operativa</option>
+                                    <option value="Mantenimiento">En Mantenimiento</option>
+                                    <option value="Reparación">En Reparación</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Marca</label>
+                                <input type="text" class="form-control" id="maquinaria-marca" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Modelo</label>
+                                <input type="text" class="form-control" id="maquinaria-modelo" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Último Mantenimiento</label>
+                            <input type="date" class="form-control" id="maquinaria-mantenimiento" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveMaquinaria()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Personal -->
+    <div class="modal fade" id="modalPersonal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalPersonalTitle">Registrar Movimiento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formPersonal">
+                        <input type="hidden" id="personal-id">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del Empleado</label>
+                            <input type="text" class="form-control" id="personal-nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Cédula</label>
+                            <input type="text" class="form-control" id="personal-cedula" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Movimiento</label>
+                            <select class="form-select" id="personal-tipo" required>
+                                <option value="Ingreso">Ingreso</option>
+                                <option value="Salida">Salida</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Fecha</label>
+                                <input type="date" class="form-control" id="personal-fecha" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Hora</label>
+                                <input type="time" class="form-control" id="personal-hora" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Observaciones</label>
+                            <textarea class="form-control" id="personal-observaciones" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="savePersonal()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Actividades -->
+    <div class="modal fade" id="modalActividades" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalActividadesTitle">Agregar Actividad</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formActividades">
+                        <input type="hidden" id="actividades-id">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre de la Actividad</label>
+                            <input type="text" class="form-control" id="actividades-nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Responsable</label>
+                            <input type="text" class="form-control" id="actividades-responsable" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Fecha Inicio</label>
+                                <input type="date" class="form-control" id="actividades-inicio" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Fecha Fin</label>
+                                <input type="date" class="form-control" id="actividades-fin" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Prioridad</label>
+                                <select class="form-select" id="actividades-prioridad" required>
+                                    <option value="Baja">Baja</option>
+                                    <option value="Media">Media</option>
+                                    <option value="Alta">Alta</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Estado</label>
+                                <select class="form-select" id="actividades-estado" required>
+                                    <option value="Pendiente">Pendiente</option>
+                                    <option value="En Proceso">En Proceso</option>
+                                    <option value="Completada">Completada</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveActividades()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spinner de carga -->
+    <div class="spinner-overlay" id="spinner">
+        <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- JavaScript Principal -->
+    <script>
+        /* ===== SISTEMA DE BASE DE DATOS (localStorage) ===== */
+        // Simula una base de datos usando localStorage del navegador
+        const Database = {
+            // Obtiene todos los registros de un módulo
+            getAll: (module) => {
+                const data = localStorage.getItem(`db_${module}`);
+                return data ? JSON.parse(data) : [];
+            },
+            
+            // Guarda todos los registros de un módulo
+            saveAll: (module, data) => {
+                localStorage.setItem(`db_${module}`, JSON.stringify(data));
+            },
+            
+            // Agrega un nuevo registro
+            add: (module, item) => {
+                const data = Database.getAll(module);
+                item.id = Date.now().toString(); // ID único basado en timestamp
+                data.push(item);
+                Database.saveAll(module, data);
+                return item;
+            },
+            
+            // Actualiza un registro existente
+            update: (module, id, updates) => {
+                const data = Database.getAll(module);
+                const index = data.findIndex(item => item.id === id);
+                if (index !== -1) {
+                    data[index] = { ...data[index], ...updates };
+                    Database.saveAll(module, data);
+                    return data[index];
+                }
+                return null;
+            },
+            
+            // Elimina un registro
+            delete: (module, id) => {
+                const data = Database.getAll(module);
+                const filtered = data.filter(item => item.id !== id);
+                Database.saveAll(module, filtered);
+            },
+            
+            // Obtiene un registro por ID
+            getById: (module, id) => {
+                const data = Database.getAll(module);
+                return data.find(item => item.id === id);
+            }
+        };
+
+        /* ===== SISTEMA DE NOTIFICACIONES ===== */
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show notification`;
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        /* ===== NAVEGACIÓN ENTRE MÓDULOS ===== */
+        function showModule(moduleName) {
+            // Oculta todos los módulos
+            document.querySelectorAll('.module-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Muestra el módulo seleccionado
+            const module = document.getElementById(`module-${moduleName}`);
+            if (module) {
+                module.classList.add('active');
+                // Actualiza los datos del módulo
+                updateModuleData(moduleName);
+            }
+        }
+
+        /* ===== ACTUALIZACIÓN EN TIEMPO REAL (SIMULADA) ===== */
+        // Simula actualizaciones cada 5 segundos
+        setInterval(() => {
+            const activeModule = document.querySelector('.module-section.active');
+            if (activeModule) {
+                const moduleId = activeModule.id.replace('module-', '');
+                updateModuleData(moduleId);
+            }
+        }, 5000);
+
+        /* ===== MÓDULO: INVENTARIO ===== */
+        let inventarioChart = null;
+
+        function updateInventarioDashboard() {
+            const materiales = Database.getAll('inventario');
+            const total = materiales.length;
+            const bajo = materiales.filter(m => m.cantidad < 10).length;
+            const valor = materiales.reduce((sum, m) => sum + (m.cantidad * m.precio), 0);
+            const categorias = [...new Set(materiales.map(m => m.categoria))].length;
+            
+            document.getElementById('inventario-total').textContent = total;
+            document.getElementById('inventario-bajo').textContent = bajo;
+            document.getElementById('inventario-valor').textContent = `Q${valor.toFixed(2)}`;
+            document.getElementById('inventario-categorias').textContent = categorias;
+            
+            // Actualizar gráfico
+            updateInventarioChart();
+        }
+
+        function updateInventarioChart() {
+            const materiales = Database.getAll('inventario');
+            const categorias = {};
+            
+            materiales.forEach(m => {
+                categorias[m.categoria] = (categorias[m.categoria] || 0) + 1;
+            });
+            
+            const ctx = document.getElementById('inventario-chart').getContext('2d');
+            
+            if (inventarioChart) {
+                inventarioChart.destroy();
+            }
+            
+            inventarioChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(categorias),
+                    datasets: [{
+                        label: 'Materiales por Categoría',
+                        data: Object.values(categorias),
+                        backgroundColor: [
+                            'rgba(255, 107, 157, 0.8)',
+                            'rgba(199, 125, 255, 0.8)',
+                            'rgba(254, 200, 216, 0.8)',
+                            'rgba(255, 154, 158, 0.8)',
+                            'rgba(177, 156, 217, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 107, 157, 1)',
+                            'rgba(199, 125, 255, 1)',
+                            'rgba(254, 200, 216, 1)',
+                            'rgba(255, 154, 158, 1)',
+                            'rgba(177, 156, 217, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Distribución de Materiales por Categoría'
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderInventarioTable() {
+            const materiales = Database.getAll('inventario');
+            const tbody = document.getElementById('inventario-table-body');
+            
+            if (materiales.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">No hay materiales registrados</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = materiales.map(m => {
+                const estado = m.cantidad < 10 ? 'danger' : m.cantidad < 50 ? 'warning' : 'success';
+                const estadoText = m.cantidad < 10 ? 'Bajo' : m.cantidad < 50 ? 'Medio' : 'Normal';
+                
+                return `
+                    <tr>
+                        <td>${m.id.substring(0, 8)}</td>
+                        <td>${m.nombre}</td>
+                        <td>${m.categoria}</td>
+                        <td>${m.cantidad}</td>
+                        <td>${m.unidad}</td>
+                        <td>Q${m.precio.toFixed(2)}</td>
+                        <td><span class="badge bg-${estado}">${estadoText}</span></td>
+                        <td>
+                            <button class="btn-action btn-edit" onclick="editInventario('${m.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action btn-delete" onclick="deleteInventario('${m.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openInventarioModal(id = null) {
+            const modal = new bootstrap.Modal(document.getElementById('modalInventario'));
+            const form = document.getElementById('formInventario');
+            form.reset();
+            document.getElementById('inventario-id').value = '';
+            document.getElementById('modalInventarioTitle').textContent = 'Agregar Material';
+            
+            if (id) {
+                const material = Database.getById('inventario', id);
+                if (material) {
+                    document.getElementById('inventario-id').value = material.id;
+                    document.getElementById('inventario-nombre').value = material.nombre;
+                    document.getElementById('inventario-categoria').value = material.categoria;
+                    document.getElementById('inventario-cantidad').value = material.cantidad;
+                    document.getElementById('inventario-unidad').value = material.unidad;
+                    document.getElementById('inventario-precio').value = material.precio;
+                    document.getElementById('modalInventarioTitle').textContent = 'Editar Material';
+                }
+            }
+            
+            modal.show();
+        }
+
+        function saveInventario() {
+            const id = document.getElementById('inventario-id').value;
+            const material = {
+                nombre: document.getElementById('inventario-nombre').value,
+                categoria: document.getElementById('inventario-categoria').value,
+                cantidad: parseInt(document.getElementById('inventario-cantidad').value),
+                unidad: document.getElementById('inventario-unidad').value,
+                precio: parseFloat(document.getElementById('inventario-precio').value)
+            };
+            
+            if (id) {
+                Database.update('inventario', id, material);
+                showNotification('Material actualizado correctamente', 'success');
+            } else {
+                Database.add('inventario', material);
+                showNotification('Material agregado correctamente', 'success');
+            }
+            
+            bootstrap.Modal.getInstance(document.getElementById('modalInventario')).hide();
+            updateModuleData('inventario');
+        }
+
+        function editInventario(id) {
+            openInventarioModal(id);
+        }
+
+        function deleteInventario(id) {
+            if (confirm('¿Está seguro de eliminar este material?')) {
+                Database.delete('inventario', id);
+                showNotification('Material eliminado correctamente', 'info');
+                updateModuleData('inventario');
+            }
+        }
+
+        /* ===== MÓDULO: MAQUINARIA ===== */
+        let maquinariaChart = null;
+
+        function updateMaquinariaDashboard() {
+            const maquinas = Database.getAll('maquinaria');
+            const total = maquinas.length;
+            const operativas = maquinas.filter(m => m.estado === 'Operativa').length;
+            const mantenimiento = maquinas.filter(m => m.estado === 'Mantenimiento' || m.estado === 'Reparación').length;
+            const uso = total > 0 ? Math.round((operativas / total) * 100) : 0;
+            
+            document.getElementById('maquinaria-total').textContent = total;
+            document.getElementById('maquinaria-operativa').textContent = operativas;
+            document.getElementById('maquinaria-mantenimiento').textContent = mantenimiento;
+            document.getElementById('maquinaria-uso').textContent = `${uso}%`;
+            
+            updateMaquinariaChart();
+        }
+
+        function updateMaquinariaChart() {
+            const maquinas = Database.getAll('maquinaria');
+            const estados = {
+                'Operativa': maquinas.filter(m => m.estado === 'Operativa').length,
+                'Mantenimiento': maquinas.filter(m => m.estado === 'Mantenimiento').length,
+                'Reparación': maquinas.filter(m => m.estado === 'Reparación').length
+            };
+            
+            const ctx = document.getElementById('maquinaria-chart').getContext('2d');
+            
+            if (maquinariaChart) {
+                maquinariaChart.destroy();
+            }
+            
+            maquinariaChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(estados),
+                    datasets: [{
+                        data: Object.values(estados),
+                        backgroundColor: [
+                            'rgba(199, 125, 255, 0.8)',
+                            'rgba(254, 200, 216, 0.8)',
+                            'rgba(255, 154, 158, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(199, 125, 255, 1)',
+                            'rgba(254, 200, 216, 1)',
+                            'rgba(255, 154, 158, 1)'
+                        ],
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Estado de Maquinaria'
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderMaquinariaTable() {
+            const maquinas = Database.getAll('maquinaria');
+            const tbody = document.getElementById('maquinaria-table-body');
+            
+            if (maquinas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">No hay maquinaria registrada</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = maquinas.map(m => {
+                const estadoClass = m.estado === 'Operativa' ? 'success' : 'warning';
+                
+                return `
+                    <tr>
+                        <td>${m.id.substring(0, 8)}</td>
+                        <td>${m.nombre}</td>
+                        <td>${m.tipo}</td>
+                        <td>${m.marca}</td>
+                        <td>${m.modelo}</td>
+                        <td><span class="badge bg-${estadoClass}">${m.estado}</span></td>
+                        <td>${m.mantenimiento}</td>
+                        <td>
+                            <button class="btn-action btn-edit" onclick="editMaquinaria('${m.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action btn-delete" onclick="deleteMaquinaria('${m.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openMaquinariaModal(id = null) {
+            const modal = new bootstrap.Modal(document.getElementById('modalMaquinaria'));
+            const form = document.getElementById('formMaquinaria');
+            form.reset();
+            document.getElementById('maquinaria-id').value = '';
+            document.getElementById('modalMaquinariaTitle').textContent = 'Agregar Maquinaria';
+            
+            if (id) {
+                const maquina = Database.getById('maquinaria', id);
+                if (maquina) {
+                    document.getElementById('maquinaria-id').value = maquina.id;
+                    document.getElementById('maquinaria-nombre').value = maquina.nombre;
+                    document.getElementById('maquinaria-tipo').value = maquina.tipo;
+                    document.getElementById('maquinaria-marca').value = maquina.marca;
+                    document.getElementById('maquinaria-modelo').value = maquina.modelo;
+                    document.getElementById('maquinaria-estado').value = maquina.estado;
+                    document.getElementById('maquinaria-mantenimiento').value = maquina.mantenimiento;
+                    document.getElementById('modalMaquinariaTitle').textContent = 'Editar Maquinaria';
+                }
+            } else {
+                // Fecha actual por defecto
+                document.getElementById('maquinaria-mantenimiento').value = new Date().toISOString().split('T')[0];
+            }
+            
+            modal.show();
+        }
+
+        function saveMaquinaria() {
+            const id = document.getElementById('maquinaria-id').value;
+            const maquina = {
+                nombre: document.getElementById('maquinaria-nombre').value,
+                tipo: document.getElementById('maquinaria-tipo').value,
+                marca: document.getElementById('maquinaria-marca').value,
+                modelo: document.getElementById('maquinaria-modelo').value,
+                estado: document.getElementById('maquinaria-estado').value,
+                mantenimiento: document.getElementById('maquinaria-mantenimiento').value
+            };
+            
+            if (id) {
+                Database.update('maquinaria', id, maquina);
+                showNotification('Maquinaria actualizada correctamente', 'success');
+            } else {
+                Database.add('maquinaria', maquina);
+                showNotification('Maquinaria agregada correctamente', 'success');
+            }
+            
+            bootstrap.Modal.getInstance(document.getElementById('modalMaquinaria')).hide();
+            updateModuleData('maquinaria');
+        }
+
+        function editMaquinaria(id) {
+            openMaquinariaModal(id);
+        }
+
+        function deleteMaquinaria(id) {
+            if (confirm('¿Está seguro de eliminar esta maquinaria?')) {
+                Database.delete('maquinaria', id);
+                showNotification('Maquinaria eliminada correctamente', 'info');
+                updateModuleData('maquinaria');
+            }
+        }
+
+        /* ===== MÓDULO: PERSONAL ===== */
+        let personalChart = null;
+
+        function updatePersonalDashboard() {
+            const registros = Database.getAll('personal');
+            const hoy = new Date().toISOString().split('T')[0];
+            const registrosHoy = registros.filter(r => r.fecha === hoy);
+            
+            const ingresos = registrosHoy.filter(r => r.tipo === 'Ingreso').length;
+            const salidas = registrosHoy.filter(r => r.tipo === 'Salida').length;
+            
+            // Empleados presentes (ingresos - salidas)
+            const presentes = Math.max(0, ingresos - salidas);
+            
+            // Total de empleados únicos
+            const empleadosUnicos = [...new Set(registros.map(r => r.cedula))].length;
+            
+            document.getElementById('personal-presente').textContent = presentes;
+            document.getElementById('personal-ingresos').textContent = ingresos;
+            document.getElementById('personal-salidas').textContent = salidas;
+            document.getElementById('personal-total').textContent = empleadosUnicos;
+            
+            updatePersonalChart();
+        }
+
+        function updatePersonalChart() {
+            const registros = Database.getAll('personal');
+            const ultimos7Dias = [];
+            const ingresosData = [];
+            const salidasData = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const fecha = new Date();
+                fecha.setDate(fecha.getDate() - i);
+                const fechaStr = fecha.toISOString().split('T')[0];
+                ultimos7Dias.push(fecha.toLocaleDateString('es-ES', { weekday: 'short' }));
+                
+                ingresosData.push(registros.filter(r => r.fecha === fechaStr && r.tipo === 'Ingreso').length);
+                salidasData.push(registros.filter(r => r.fecha === fechaStr && r.tipo === 'Salida').length);
+            }
+            
+            const ctx = document.getElementById('personal-chart').getContext('2d');
+            
+            if (personalChart) {
+                personalChart.destroy();
+            }
+            
+            personalChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ultimos7Dias,
+                    datasets: [{
+                        label: 'Ingresos',
+                        data: ingresosData,
+                        borderColor: 'rgba(199, 125, 255, 1)',
+                        backgroundColor: 'rgba(199, 125, 255, 0.2)',
+                        tension: 0.4,
+                        borderWidth: 3,
+                        fill: true
+                    }, {
+                        label: 'Salidas',
+                        data: salidasData,
+                        borderColor: 'rgba(255, 154, 158, 1)',
+                        backgroundColor: 'rgba(255, 154, 158, 0.2)',
+                        tension: 0.4,
+                        borderWidth: 3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Movimientos de Personal (Últimos 7 días)'
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderPersonalTable() {
+            const registros = Database.getAll('personal');
+            const tbody = document.getElementById('personal-table-body');
+            
+            // Ordenar por fecha y hora más recientes primero
+            registros.sort((a, b) => {
+                const dateA = new Date(`${a.fecha}T${a.hora}`);
+                const dateB = new Date(`${b.fecha}T${b.hora}`);
+                return dateB - dateA;
+            });
+            
+            if (registros.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">No hay registros de personal</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = registros.map(r => {
+                const tipoClass = r.tipo === 'Ingreso' ? 'success' : 'danger';
+                
+                return `
+                    <tr>
+                        <td>${r.id.substring(0, 8)}</td>
+                        <td>${r.nombre}</td>
+                        <td>${r.cedula}</td>
+                        <td><span class="badge bg-${tipoClass}">${r.tipo}</span></td>
+                        <td>${r.fecha}</td>
+                        <td>${r.hora}</td>
+                        <td>${r.observaciones || '-'}</td>
+                        <td>
+                            <button class="btn-action btn-edit" onclick="editPersonal('${r.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action btn-delete" onclick="deletePersonal('${r.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openPersonalModal(id = null) {
+            const modal = new bootstrap.Modal(document.getElementById('modalPersonal'));
+            const form = document.getElementById('formPersonal');
+            form.reset();
+            document.getElementById('personal-id').value = '';
+            document.getElementById('modalPersonalTitle').textContent = 'Registrar Movimiento';
+            
+            if (id) {
+                const registro = Database.getById('personal', id);
+                if (registro) {
+                    document.getElementById('personal-id').value = registro.id;
+                    document.getElementById('personal-nombre').value = registro.nombre;
+                    document.getElementById('personal-cedula').value = registro.cedula;
+                    document.getElementById('personal-tipo').value = registro.tipo;
+                    document.getElementById('personal-fecha').value = registro.fecha;
+                    document.getElementById('personal-hora').value = registro.hora;
+                    document.getElementById('personal-observaciones').value = registro.observaciones || '';
+                    document.getElementById('modalPersonalTitle').textContent = 'Editar Movimiento';
+                }
+            } else {
+                // Fecha y hora actual por defecto
+                const now = new Date();
+                document.getElementById('personal-fecha').value = now.toISOString().split('T')[0];
+                document.getElementById('personal-hora').value = now.toTimeString().slice(0, 5);
+            }
+            
+            modal.show();
+        }
+
+        function savePersonal() {
+            const id = document.getElementById('personal-id').value;
+            const registro = {
+                nombre: document.getElementById('personal-nombre').value,
+                cedula: document.getElementById('personal-cedula').value,
+                tipo: document.getElementById('personal-tipo').value,
+                fecha: document.getElementById('personal-fecha').value,
+                hora: document.getElementById('personal-hora').value,
+                observaciones: document.getElementById('personal-observaciones').value
+            };
+            
+            if (id) {
+                Database.update('personal', id, registro);
+                showNotification('Registro actualizado correctamente', 'success');
+            } else {
+                Database.add('personal', registro);
+                showNotification('Registro agregado correctamente', 'success');
+            }
+            
+            bootstrap.Modal.getInstance(document.getElementById('modalPersonal')).hide();
+            updateModuleData('personal');
+        }
+
+        function editPersonal(id) {
+            openPersonalModal(id);
+        }
+
+        function deletePersonal(id) {
+            if (confirm('¿Está seguro de eliminar este registro?')) {
+                Database.delete('personal', id);
+                showNotification('Registro eliminado correctamente', 'info');
+                updateModuleData('personal');
+            }
+        }
+
+        /* ===== MÓDULO: ACTIVIDADES ===== */
+        let actividadesChart = null;
+
+        function updateActividadesDashboard() {
+            const actividades = Database.getAll('actividades');
+            const total = actividades.length;
+            const completadas = actividades.filter(a => a.estado === 'Completada').length;
+            const pendientes = actividades.filter(a => a.estado === 'Pendiente' || a.estado === 'En Proceso').length;
+            
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            const vencidas = actividades.filter(a => {
+                const fechaFin = new Date(a.fechaFin);
+                fechaFin.setHours(0, 0, 0, 0);
+                return fechaFin < hoy && a.estado !== 'Completada';
+            }).length;
+            
+            document.getElementById('actividades-total').textContent = total;
+            document.getElementById('actividades-completadas').textContent = completadas;
+            document.getElementById('actividades-pendientes').textContent = pendientes;
+            document.getElementById('actividades-vencidas').textContent = vencidas;
+            
+            updateActividadesChart();
+        }
+
+        function updateActividadesChart() {
+            const actividades = Database.getAll('actividades');
+            const estados = {
+                'Pendiente': actividades.filter(a => a.estado === 'Pendiente').length,
+                'En Proceso': actividades.filter(a => a.estado === 'En Proceso').length,
+                'Completada': actividades.filter(a => a.estado === 'Completada').length
+            };
+            
+            const ctx = document.getElementById('actividades-chart').getContext('2d');
+            
+            if (actividadesChart) {
+                actividadesChart.destroy();
+            }
+            
+            actividadesChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(estados),
+                    datasets: [{
+                        data: Object.values(estados),
+                        backgroundColor: [
+                            'rgba(254, 200, 216, 0.8)',
+                            'rgba(255, 107, 157, 0.8)',
+                            'rgba(199, 125, 255, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(254, 200, 216, 1)',
+                            'rgba(255, 107, 157, 1)',
+                            'rgba(199, 125, 255, 1)'
+                        ],
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Estado de Actividades'
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderActividadesTable() {
+            const actividades = Database.getAll('actividades');
+            const tbody = document.getElementById('actividades-table-body');
+            
+            if (actividades.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">No hay actividades registradas</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = actividades.map(a => {
+                let estadoClass = 'warning';
+                if (a.estado === 'Completada') estadoClass = 'success';
+                else if (a.estado === 'En Proceso') estadoClass = 'info';
+                
+                let prioridadClass = 'secondary';
+                if (a.prioridad === 'Alta') prioridadClass = 'danger';
+                else if (a.prioridad === 'Media') prioridadClass = 'warning';
+                
+                return `
+                    <tr>
+                        <td>${a.id.substring(0, 8)}</td>
+                        <td>${a.nombre}</td>
+                        <td>${a.responsable}</td>
+                        <td>${a.fechaInicio}</td>
+                        <td>${a.fechaFin}</td>
+                        <td><span class="badge bg-${prioridadClass}">${a.prioridad}</span></td>
+                        <td><span class="badge bg-${estadoClass}">${a.estado}</span></td>
+                        <td>
+                            <button class="btn-action btn-edit" onclick="editActividades('${a.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action btn-delete" onclick="deleteActividades('${a.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openActividadesModal(id = null) {
+            const modal = new bootstrap.Modal(document.getElementById('modalActividades'));
+            const form = document.getElementById('formActividades');
+            form.reset();
+            document.getElementById('actividades-id').value = '';
+            document.getElementById('modalActividadesTitle').textContent = 'Agregar Actividad';
+            
+            if (id) {
+                const actividad = Database.getById('actividades', id);
+                if (actividad) {
+                    document.getElementById('actividades-id').value = actividad.id;
+                    document.getElementById('actividades-nombre').value = actividad.nombre;
+                    document.getElementById('actividades-responsable').value = actividad.responsable;
+                    document.getElementById('actividades-inicio').value = actividad.fechaInicio;
+                    document.getElementById('actividades-fin').value = actividad.fechaFin;
+                    document.getElementById('actividades-prioridad').value = actividad.prioridad;
+                    document.getElementById('actividades-estado').value = actividad.estado;
+                    document.getElementById('modalActividadesTitle').textContent = 'Editar Actividad';
+                }
+            } else {
+                // Fecha actual por defecto
+                const hoy = new Date().toISOString().split('T')[0];
+                document.getElementById('actividades-inicio').value = hoy;
+            }
+            
+            modal.show();
+        }
+
+        function saveActividades() {
+            const id = document.getElementById('actividades-id').value;
+            const actividad = {
+                nombre: document.getElementById('actividades-nombre').value,
+                responsable: document.getElementById('actividades-responsable').value,
+                fechaInicio: document.getElementById('actividades-inicio').value,
+                fechaFin: document.getElementById('actividades-fin').value,
+                prioridad: document.getElementById('actividades-prioridad').value,
+                estado: document.getElementById('actividades-estado').value
+            };
+            
+            if (id) {
+                Database.update('actividades', id, actividad);
+                showNotification('Actividad actualizada correctamente', 'success');
+            } else {
+                Database.add('actividades', actividad);
+                showNotification('Actividad agregada correctamente', 'success');
+            }
+            
+            bootstrap.Modal.getInstance(document.getElementById('modalActividades')).hide();
+            updateModuleData('actividades');
+        }
+
+        function editActividades(id) {
+            openActividadesModal(id);
+        }
+
+        function deleteActividades(id) {
+            if (confirm('¿Está seguro de eliminar esta actividad?')) {
+                Database.delete('actividades', id);
+                showNotification('Actividad eliminada correctamente', 'info');
+                updateModuleData('actividades');
+            }
+        }
+
+        /* ===== FUNCIÓN PRINCIPAL DE ACTUALIZACIÓN ===== */
+        function updateModuleData(moduleName) {
+            switch(moduleName) {
+                case 'inventario':
+                    updateInventarioDashboard();
+                    renderInventarioTable();
+                    break;
+                case 'maquinaria':
+                    updateMaquinariaDashboard();
+                    renderMaquinariaTable();
+                    break;
+                case 'personal':
+                    updatePersonalDashboard();
+                    renderPersonalTable();
+                    break;
+                case 'actividades':
+                    updateActividadesDashboard();
+                    renderActividadesTable();
+                    break;
+            }
+        }
+
+        /* ===== INICIALIZACIÓN ===== */
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos iniciales del módulo activo
+            updateModuleData('inventario');
+            
+            // Datos de ejemplo (opcional - descomentar para tener datos iniciales)
+            /*
+            if (Database.getAll('inventario').length === 0) {
+                Database.add('inventario', { nombre: 'Cemento', categoria: 'Construcción', cantidad: 100, unidad: 'Saco', precio: 8.50 });
+                Database.add('inventario', { nombre: 'Ladrillos', categoria: 'Construcción', cantidad: 500, unidad: 'Unidad', precio: 0.35 });
+                Database.add('inventario', { nombre: 'Cable Eléctrico', categoria: 'Electricidad', cantidad: 5, unidad: 'Metro', precio: 2.50 });
+            }
+            */
+        });
+    </script>
+</body>
+</html>
+
